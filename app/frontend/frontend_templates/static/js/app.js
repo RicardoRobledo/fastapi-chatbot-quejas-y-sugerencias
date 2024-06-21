@@ -1,5 +1,5 @@
 //const url = 'http://127.0.0.1:8000/api/v1/';
-const url = 'https://fastapi-chatbot-quejas-y-sugerencias.onrender.com/';
+const url = 'https://fastapi-chatbot-quejas-y-sugerencias.onrender.com/api/v1/';
 const assistant_name = 'Asistente de quejas';
 const welcome_message = '👋 ¡Hola!, ¿Que necesitas saber el día de hoy?';
 let id_mensaje = 0;
