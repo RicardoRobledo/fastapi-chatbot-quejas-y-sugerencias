@@ -1,0 +1,17 @@
+#### tarea
+este es el contenido de una tabla con mensajes.
+
+$markdown_table
+
+responde la pregunta del usuario.
+
+#### pregunta
+Necesito que me des un resumen de las quejas y sugerencias más comunes de modo que las clasifiques de la siguiente manera: quejas, sugerencias.
+Ordena las clasificaciones resumidas en base a orden de urgencia como baja y alta. Baja quiere decir que es algo que no es grave.
+Alta implica problemas graves como acoso, conflictos serios, toxicidad, posibilidad de rotación de empleados, hostilidad, etc.
+
+si no hay quejas o sugerencias de algun tipo (alta o baja) no inventes nada y simplemente no las agregues.
+
+Debes de responder saludando a y despidiéndote animándo a un usuario a que se solucione todo, no debes de hacer referencia a ningún nombre de nadie.
+
+Necesito que me lo devuelvas en un formato que pueda ser agregado en un pdf.

@@ -1,0 +1,9 @@
+from decouple import config
+
+
+OPENAI_API_KEY = config('OPENAI_API_KEY')
+ASSISTANT_MODEL = config('ASSISTANT_MODEL')
+ASSISTANT_ID = config('ASSISTANT_ID')
+
+GOOGLE_SHEET_ID = config('GOOGLE_SHEET_ID')
+BASE_URL_APP = config('BASE_URL_APP')
