@@ -5,7 +5,7 @@ $(document).ready(function() {
 $('#login').on('click', async function(event){
     event.preventDefault();
 
-    const response = await fetch('http://127.0.0.1:8000/api/v1/authentication/oauth/login', {
+    const response = await fetch('https://fastapi-chatbot-quejas-y-sugerencias.onrender.com/api/v1/authentication/oauth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
