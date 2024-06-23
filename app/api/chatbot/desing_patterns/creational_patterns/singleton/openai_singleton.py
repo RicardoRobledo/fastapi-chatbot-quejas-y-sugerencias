@@ -3,6 +3,7 @@ from openai import AsyncOpenAI
 
 from app import config
 
+
 __author__ = 'Ricardo'
 __version__ = '1.0'
 

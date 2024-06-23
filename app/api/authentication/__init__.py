@@ -1,0 +1,1 @@
+from ..authentication.dependencies.token_dependencies import oauth2_scheme

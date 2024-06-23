@@ -1,1 +1,2 @@
 from .desing_patterns.creational_patterns.singleton.openai_singleton import OpenAISingleton
+from .desing_patterns.creational_patterns.singleton.database_singleton import DatabaseSingleton

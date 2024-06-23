@@ -83,6 +83,11 @@ hr{
     font-size: 18px !important;
 }
 
+.initial-message-container:hover{
+    background-color: rgb(252, 215, 159);
+    cursor: pointer;
+}
+
 .form-message-container button{
     color: #ffffff;
     background-color: rgb(23, 164, 211);

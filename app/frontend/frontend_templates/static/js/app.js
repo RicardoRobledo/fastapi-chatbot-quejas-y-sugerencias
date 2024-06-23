@@ -1,5 +1,5 @@
-//const url = 'http://127.0.0.1:8000/api/v1/';
-const url = 'https://fastapi-chatbot-quejas-y-sugerencias.onrender.com/api/v1/';
+const url = 'http://127.0.0.1:8000/api/v1/';
+//const url = 'https://fastapi-chatbot-quejas-y-sugerencias.onrender.com/api/v1/';
 const assistant_name = 'Asistente de quejas';
 const welcome_message = '👋 ¡Hola!, ¿Que necesitas saber el día de hoy?';
 let id_mensaje = 0;
@@ -38,7 +38,7 @@ function format_user_message(message){
   const userMessage = `
   <div class='user-message col-12 py-4 d-flex justify-content-center'>
       <div class='d-flex col-8' id='user-message-content'>
-          <img src='/static/imgs/user.png' width='40' height='40'>
+          <img src='/static/imgs/admin.png' width='40' height='40'>
           <div class='m-2'>
               <h6>Tú</h6>
               <p>${message}</p>
@@ -54,12 +54,6 @@ function format_user_message(message){
 function hide_message_container(){
   $('#btn-enviar').hide();
   $('#input-message').hide();
-}
-
-
-function show_message_container(){
-  $('#btn-enviar').show();
-  $('#input-message').show();
 }
 
 
@@ -91,6 +85,7 @@ async function initialize(){
   send_button.prop('disabled', true);
   $('#btn-detener').hide();
   hide_message_container();
+  $('#initial-cards-container').hide();
 }
 
 
@@ -106,16 +101,14 @@ async function send_message(id, user_message, signal){
   const message_url = url + 'chatbot/message';
   const thread_id = localStorage.getItem('thread_id');
   const dates = JSON.parse(localStorage.getItem('dates'));
-
-  console.log(dates);
-  console.log(typeof dates);
-
+  const tokens = JSON.parse(localStorage.getItem('tokens'));
 
   const response = await fetch(message_url, {
     signal: signal,
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${tokens['access_token']}`
     },
     body: JSON.stringify({ dates, thread_id, user_message })
   }).then(
@@ -124,8 +117,6 @@ async function send_message(id, user_message, signal){
     async (data) => {
       const md = window.markdownit();
       const resultHtml = md.render(data['msg']);
-      console.log(data);
-      console.log(resultHtml);
       $(`#${id} .m-2 p`).append(resultHtml);
     }
   ).catch(error => {
@@ -179,6 +170,17 @@ async function create_conversational_thread(){
 //                      events
 // --------------------------------------------------
 
+
+$('.initial-message-container').on('click', function() {
+  const text = $(this).find('.card-text').text();
+  $('#initial-cards-container').hide();
+  enable_form_message();
+  $('#input-message').val(text);
+  $('#btn-enviar').click();
+  disable_form_message();
+});
+
+
 $('#input-message').on('keyup', function(event){
 
   let text = $(this).val();
@@ -201,7 +203,9 @@ $('#input-message').on('keyup', function(event){
 });
 
 
-$('#confirm-button').click(function() {
+$('#confirm-button').click(function(event) {
+
+  event.preventDefault();
 
   function isValidDate(date) {
     return date instanceof Date && !isNaN(date);
@@ -211,21 +215,41 @@ $('#confirm-button').click(function() {
   const toDate = new Date($('#datepicker2').val());
 
   if (!isValidDate(fromDate) || !isValidDate(toDate)) {
-    console.log('Una o ambas fechas son inválidas');
+    $('#warning-badge').text('Una o ambas fechas son inválidas');
+    $('#warning-badge').fadeIn(900, function(){
+      $(this).delay(2000).fadeOut(900);
+    });
+  }else if(fromDate>toDate){
+    $('#warning-badge').text('La fecha inicial no puede ser mayor a la fecha final');
+    $('#warning-badge').fadeIn(900, function(){
+      $(this).delay(2000).fadeOut(900);
+    });
+  }else{
+    localStorage.setItem('dates', JSON.stringify({'from_date':fromDate, 'to_date':toDate}));
+
+    $('#btn-enviar').fadeIn(900)
+    $('#input-message').show(900);
+    $('#form-calendar').hide();
+    $('#message-container p').remove();
+    $('#message-container form').remove();
+    $('#success-badge').fadeIn(900);
+    $('#initial-cards-container').fadeIn(900);
   }
 
-  if(fromDate>toDate){
-    console.log('error');
-  }
+});
 
-  localStorage.setItem('dates', JSON.stringify({'from_date':fromDate, 'to_date':toDate}));
-  show_message_container();
+
+$('#btn-logout').click(async function(event) {
+
+  await delete_conversation_thread();
+  window.location.href = '/frontend/login';
 
 });
 
 
 $('#btn-enviar').on('click', async function(){
 
+  $('#initial-cards-container').hide();
   disable_form_message();
   const userMessage = get_message();
   // getting identifier to add in chatbot message
@@ -264,9 +288,11 @@ $('#btn-detener').on('click', function(){
 
 
 $(window).on('beforeunload', async function() {
+
   if(localStorage.getItem('thread_id')!==null){
     await delete_conversation_thread();
   }
+
 });
 
 
@@ -274,13 +300,22 @@ $(window).on('beforeunload', async function() {
 //                 initialization
 // --------------------------------------------------
 
+
 $(document).ready(async function() {
+
+  const tokens = localStorage.getItem('tokens');
+
+  if(!tokens){
+    window.location.href = '/frontend/login';
+  }
+
   await initialize();
   $("h6").text(`{{assistant_name}}`.replace("{{assistant_name}}", assistant_name));
 
   $(".loader-wrapper").fadeOut(1200, function() {
     $("#contenido").fadeIn(1500);
   });
+
 });
 
 //$( document ).ready(function(){});
